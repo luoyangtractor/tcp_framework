@@ -30,3 +30,15 @@
 *.exe
 *.out
 *.app
+
+**/Debug
+**/Release
+
+client/.vs/
+client/Debug/
+client/Release/
+client/X64/
+server/.vs/
+server/Debug/
+server/Release/
+server/X64/
