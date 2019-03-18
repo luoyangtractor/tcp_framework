@@ -81,7 +81,12 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Users\wzh\Desktop\libevent-release-2.1.8-stable\libevent-release-2.1.8-stable\WIN32-Code\nmake;C:\Users\wzh\Desktop\libevent-release-2.1.8-stable\libevent-release-2.1.8-stable\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>C:\Users\wzh\Desktop\tcp_framework\server\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libevent.lib;libevent_core.lib;libevent_extras.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -89,7 +94,13 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Users\wzh\Desktop\libevent-release-2.1.8-stable\libevent-release-2.1.8-stable\WIN32-Code\nmake;C:\Users\wzh\Desktop\libevent-release-2.1.8-stable\libevent-release-2.1.8-stable\include;C:\Users\wzh\Desktop\tcp_framework\server\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>C:\Users\wzh\Desktop\tcp_framework\server\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libevent.lib;libevent_core.lib;libevent_extras.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -99,10 +110,13 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Users\wzh\Desktop\libevent-release-2.1.8-stable\libevent-release-2.1.8-stable\WIN32-Code\nmake;C:\Users\wzh\Desktop\libevent-release-2.1.8-stable\libevent-release-2.1.8-stable\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>C:\Users\wzh\Desktop\tcp_framework\server\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libevent.lib;libevent_core.lib;libevent_extras.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -113,10 +127,14 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Users\wzh\Desktop\libevent-release-2.1.8-stable\libevent-release-2.1.8-stable\WIN32-Code\nmake;C:\Users\wzh\Desktop\libevent-release-2.1.8-stable\libevent-release-2.1.8-stable\include;C:\Users\wzh\Desktop\tcp_framework\server\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>C:\Users\wzh\Desktop\tcp_framework\server\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libevent.lib;libevent_core.lib;libevent_extras.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -125,7 +143,9 @@
     <ClCompile Include="..\src\IO_Thread_Manager.cpp" />
     <ClCompile Include="..\src\Listener.cpp" />
     <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="..\src\net_utils.cpp" />
     <ClCompile Include="..\src\Tcp_Con.cpp" />
+    <ClCompile Include="..\src\Tcp_Con_Manager.cpp" />
     <ClCompile Include="..\src\Tcp_Session.cpp" />
     <ClCompile Include="..\src\Thread_Base.cpp" />
     <ClCompile Include="..\src\Worker_Thread.cpp" />
@@ -136,7 +156,9 @@
     <ClInclude Include="..\include\IO_Thread.h" />
     <ClInclude Include="..\include\IO_Thread_Manager.h" />
     <ClInclude Include="..\include\Listener.h" />
+    <ClInclude Include="..\include\net_utils.h" />
     <ClInclude Include="..\include\Tcp_Con.h" />
+    <ClInclude Include="..\include\Tcp_Con_Manager.h" />
     <ClInclude Include="..\include\Tcp_Session.h" />
     <ClInclude Include="..\include\Thread_Base.h" />
     <ClInclude Include="..\include\thread_global_def.h" />

@@ -10,14 +10,15 @@ Worker_Thread::Worker_Thread(int max_queue_size, int max_wait_time):Thread_Base(
 															p_thread(std::make_shared<std::thread>(&Worker_Thread::run, this)),\
 															p_helper(std::make_shared<Helper>())
 {
-	m_thread_id = p_thread.get()->get_id();
-	p_thread.get()->detach();
+	m_thread_id = p_thread->get_id();
+	p_thread->join();
 }
 
 
 Worker_Thread::~Worker_Thread()
 {
 	this->stop();
+	this->terminate();
 }
 
 
@@ -25,13 +26,17 @@ void Worker_Thread::run()
 {
 	while (m_running_flag)
 	{
-		try {
-			do_Work();
-		}
-		catch (std::exception e)
+		if (m_started_flag)
 		{
-			exception_Handle(e);
-			stop();
+			try {
+				do_Work();
+			}
+			catch (std::exception e)
+			{
+				exception_Handle(e);
+				this->stop();
+				this->terminate();
+			}
 		}
 	}
 }
@@ -49,7 +54,7 @@ bool Worker_Thread::do_Work()
 	m_thread_status = RUNNING;
 
 	m_queue_mutex.lock();
-	auto _work = std::move(m_task_queue.front().first);
+	auto _task = std::move(m_task_queue.front().first);
 	time_point _insert_time = std::move(m_task_queue.front().second);
 	m_task_queue.pop();
 	if (m_task_queue.empty())m_empty_flag = true;
@@ -63,22 +68,20 @@ bool Worker_Thread::do_Work()
 	{
 		//std::cout<< "wait_time: "<< _tp.time_since_epoch().count() - _insert_time.time_since_epoch().count() << std::endl;
 		//std::cout << std::this_thread::get_id() <<" task_queue size: " << _task_queue.size() << std::endl;
-
-		_work(p_helper.get());
+		_task->m_promise.set_value(_task->exec(p_helper.get()));
 	}
 	else
 	{
-		std::cout << "task timeout" << std::endl;
+		std::cout << "task timeout  " << std::endl;
 	}
 	return true;
 }
 
 
-std::future<Result> Worker_Thread::insert_Task(std::function<Result(Helper*)> work)
+std::future<Result> Worker_Thread::insert_Task(std::shared_ptr<Task> task)
 {
-	std::packaged_task<Result(Helper*)> _task(work);
-	std::future<Result> _future_result = _task.get_future();
-	m_queue_mutex.lock();
+	std::future<Result> _future_result = task->m_promise.get_future();
+	std::lock_guard<std::mutex> _locker(m_queue_mutex);
 	//std::cout << "insert a tast  task_queue size: " << _task_queue.size()<< std::endl;
 
 	if (m_max_queue_size > 0)
@@ -86,7 +89,7 @@ std::future<Result> Worker_Thread::insert_Task(std::function<Result(Helper*)> wo
 		if (m_task_queue.size() < m_max_queue_size)
 		{
 			time_point _insert_time = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now());
-			m_task_queue.push(std::move(std::make_pair(std::move(_task), _insert_time)));
+			m_task_queue.push(std::move(std::make_pair(task, _insert_time)));
 		}
 		else
 		{
@@ -95,15 +98,14 @@ std::future<Result> Worker_Thread::insert_Task(std::function<Result(Helper*)> wo
 				m_task_queue.pop();
 			}
 			time_point _insert_time = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now());
-			m_task_queue.push(std::move(std::make_pair(std::move(_task), _insert_time)));
+			m_task_queue.push(std::move(std::make_pair(task, _insert_time)));
 		}
 	}
 	else
 	{
 		time_point _insert_time = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now());
-		m_task_queue.push(std::move(std::make_pair(std::move(_task), _insert_time)));
+		m_task_queue.push(std::move(std::make_pair(task, _insert_time)));
 	}
-	m_queue_mutex.unlock();
 	m_empty_flag = false;
 	return _future_result;
 }

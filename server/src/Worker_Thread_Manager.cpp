@@ -14,20 +14,48 @@ Worker_Thread_Manager::Worker_Thread_Manager(int thread_num, int max_wait_time, 
 }
 
 
-Worker_Thread_Manager::~Worker_Thread_Manager()
+bool Worker_Thread_Manager::stop()
 {
 	for (auto iter : m_thread_pool)
 	{
 		iter->stop();
 	}
+	return true;
 }
 
 
-std::future<Result> Worker_Thread_Manager::dispatch_Work(std::function<Result(Helper*)> work)
+bool Worker_Thread_Manager::start()
+{
+	for (auto iter : m_thread_pool)
+	{
+		iter->start();
+	}
+	return true;
+}
+
+
+bool Worker_Thread_Manager::terminate()
+{
+	for (auto iter : m_thread_pool)
+	{
+		iter->stop();
+		iter->terminate();
+	}
+	return true;
+}
+
+
+Worker_Thread_Manager::~Worker_Thread_Manager()
+{
+	this->terminate();
+}
+
+
+std::future<Result> Worker_Thread_Manager::dispatch_Task(std::shared_ptr<Task> task)
 {
 	auto _suitable_thread  = choose_Suitable_Thread();
 	std::cout<<"insert a task in thread "<< _suitable_thread->get_Thread_Id()<<std::endl;
-	auto future = std::move(_suitable_thread->insert_Task(work));
+	auto future = std::move(_suitable_thread->insert_Task(task));
 	_suitable_thread->m_cv.notify_one();
 	return future;
 }

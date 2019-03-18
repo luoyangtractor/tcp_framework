@@ -14,12 +14,15 @@ public:
 	explicit Thread_Base();
 	virtual ~Thread_Base();
 	
+	virtual bool start();
 	virtual bool stop();
 	virtual void run();
+	virtual bool terminate();
 	virtual void exception_Handle(std::exception& e);
 	virtual bool do_Work();
 
 	std::atomic<bool> m_running_flag;
+	std::atomic<bool> m_started_flag;
 };
 
 #endif

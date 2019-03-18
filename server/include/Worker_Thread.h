@@ -37,6 +37,16 @@ public:
 };
 
 
+class Task
+{
+public:
+	explicit Task() {};
+	virtual ~Task() {};
+	virtual Result exec(Helper*) { Result t; return t; };
+	std::promise<Result> m_promise;
+};
+
+
 class Worker_Thread :public Thread_Base
 {
 public:
@@ -44,17 +54,18 @@ public:
 	virtual ~Worker_Thread();
 
 	bool do_Work();
-	std::future<Result> insert_Task(std::function<Result(Helper*)> work);
+	std::future<Result> insert_Task(std::shared_ptr<Task>);
 	int get_Task_Queue_Size();
 	std::thread::id get_Thread_Id();
 
 	std::condition_variable m_cv;
 	std::mutex m_cv_mutex;
 
+
 private:
 	void run();
 
-	std::queue<std::pair<std::packaged_task<Result(Helper*)>, time_point>> m_task_queue;
+	std::queue<std::pair<std::shared_ptr<Task>, time_point>> m_task_queue;
 	std::mutex m_queue_mutex;
 	
 	std::shared_ptr<std::thread> p_thread;
